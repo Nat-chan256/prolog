@@ -1,131 +1,133 @@
-rewriteFile(Path):- see(Path), readAllLines(List), write(List), seen.
+rewriteFile(Path):- see(Path), readAllLines(List), seen, atom_concat('New', Path, NewPath), tell(NewPath), writeStringsFromList(List), told.
 
-readAllLines(ResultList):- readln(CurStr), readAllLines([CurStr], ResultList).
+readAllLines(ResultList):- readln(CurStr), readAllLines(CurStr, [], ResultList).
 readAllLines([], []):-!.
-readAllLines(CurList, ResultList):- readln([]), ResultList = CurList, !.
-readAllLines(CurList, ResultList):- readln(NewStr), insert(CurList, NewStr, NewList), readAllLines(NewList, ResultList).
+readAllLines([], CurList, CurList):- !.
+readAllLines(CurStr, CurList, ResultList):- insert(CurList, CurStr, NewList), readln(NewStr), readAllLines(NewStr, NewList, ResultList).
 
 insert([], NewStr, [NewStr]):- !.
 insert([H|T], NewStr, ResultList):- numOfConsInStr(NewStr, N1), numOfConsInStr(H, N2), N1 < N2, append([NewStr], [H], TempList), append(TempList, T, ResultList), !.
 insert([H|T], NewStr, ResultList):- insert(T, [H], NewStr, ResultList).
-insert([], FirstHalf, NewStr, ResultList):- append(FirstHalf, NewStr, ResultList), !.
-insert([H|T], FirstHalf, NewStr, ResultList):- numOfConsInStr(NewStr, N1), numOfConsInStr(H, N2), N1 < N2, append(FirstHalf, NewStr, NewFirstHalf), append(NewFirstHalf, [H], TempHead), append(TempHead, T, ResultList), !.
+insert([], FirstHalf, NewStr, ResultList):- append(FirstHalf, [NewStr], ResultList), !.
+insert([H|T], FirstHalf, NewStr, ResultList):- numOfConsInStr(NewStr, N1), numOfConsInStr(H, N2), N1 < N2, append(FirstHalf, [NewStr], NewFirstHalf), append(NewFirstHalf, [H], TempHead), append(TempHead, T, ResultList), !.
 insert([H|T], FirstHalf, NewStr, ResultList):- append(FirstHalf, [H], NewFirstHalf), insert(T, NewFirstHalf, NewStr, ResultList).
 
 numOfConsInStr(Str, N):- numOfConsInStr(Str, 0, N).
 numOfConsInStr([], CurN, CurN):- !.
-numOfConsInStr([H|T], CurN, N):- numOfConsInWord([H], N1), NewN is CurN + N1, numOfConsInStr(T, NewN, N).
+numOfConsInStr([H|T], CurN, N):- numOfConsInWord(H, N1), NewN is CurN + N1, numOfConsInStr(T, NewN, N).
 
-numOfConsInWord(Str, N):- numOfConsInWord(Str, 0, N).
+numOfConsInWord(Str, N):- atom_chars(Str, Chars), numOfConsInWord(Chars, 0, N).
 numOfConsInWord([], CurN, CurN):- !.
 numOfConsInWord([H|T], CurN, N):- consonant(H), NewN is CurN + 1, numOfConsInWord(T, NewN, N), !.
 numOfConsInWord([_|T], CurN, N):- numOfConsInWord(T, CurN, N).
 
-/*Заглавные буквы кириллицы*/
-consonant(1041).
-consonant(1042).
-consonant(1043).
-consonant(1044).
+writeStringsFromList([]):- !.
+writeStringsFromList([H|T]):- write_str(H), write('\n'), writeStringsFromList(T).
 
-consonant(1046).
-consonant(1047).
+write_str([]):-!.
+write_str([H|T]):- atom_chars(H, Chars), write_word(Chars), write(' '), write_str(T).
 
-consonant(1049).
-consonant(1050).
-consonant(1051).
-consonant(1052).
-consonant(1053).
+write_word([]):- !.
+write_word([H|T]):- put(H), write_word(T).
 
-consonant(1055).
-consonant(1056).
-consonant(1057).
-consonant(1058).
+consonant('Б').
+consonant('В').
+consonant('Г').
+consonant('Д').
+consonant('Ж').
+consonant('З').
+consonant('Й').
+consonant('К').
+consonant('Л').
+consonant('М').
+consonant('Н').
+consonant('П').
+consonant('Р').
+consonant('С').
+consonant('Т').
+consonant('У').
+consonant('Ф').
+consonant('Х').
+consonant('Ц').
+consonant('Ч').
+consonant('Ш').
+consonant('Щ').
 
-consonant(1060).
-consonant(1061).
-consonant(1062).
-consonant(1063).
-consonant(1064).
-consonant(1065).
+consonant(б).
+consonant(в).
+consonant(г).
+consonant(д).
+consonant(ж).
+consonant(з).
+consonant(й).
+consonant(к).
+consonant(л).
+consonant(м).
+consonant(н).
+consonant(п).
+consonant(р).
+consonant(с).
+consonant(т).
+consonant(ф).
+consonant(х).
+consonant(ц).
+consonant(ч).
+consonant(ш).
+consonant(щ).
+ 
+consonant('B').
+consonant('C').
+consonant('D').
+consonant('F').
+consonant('G').
+consonant('H').
+consonant('J'). 
+consonant('K').
+consonant('L').
+consonant('M').
+consonant('N').
+consonant('P').
+consonant('Q').
+consonant('R').
+consonant('S').
+consonant('T').
+consonant('V'). 
+consonant('W').
+consonant('X').
+consonant('Z').
 
-/*Строчные буквы кириллицы*/
-consonant(1073).
-consonant(1074).
-consonant(1075).
-consonant(1076).
-
-consonant(1078).
-consonant(1079).
-
-consonant(1081).
-consonant(1082).
-consonant(1083).
-consonant(1084).
-consonant(1085).
-
-consonant(1087).
-consonant(1088).
-consonant(1089).
-consonant(1090).
-
-consonant(1092).
-consonant(1093).
-consonant(1094).
-consonant(1095).
-consonant(1096).
-consonant(1097).
-
-/*Заглавные буквы латиницы*/
-consonant(66). /*B*/
-consonant(67).
-consonant(68).
-
-consonant(70). /*F*/
-consonant(71).
-consonant(72).
-
-consonant(74). /*J*/
-consonant(75).
-consonant(76).
-consonant(77).
-consonant(78).
-
-consonant(80). /*P*/
-consonant(81).
-consonant(82).
-consonant(83).
-consonant(84).
-
-consonant(86). /*V*/
-consonant(87).
-consonant(88).
-consonant(90).
+consonant(b). 
+consonant(c).
+consonant(d).
+consonant(f).
+consonant(g).
+consonant(h).
+consonant(j).
+consonant(k).
+consonant(l).
+consonant(m).
+consonant(n).
+consonant(p). 
+consonant(q).
+consonant(r).
+consonant(s).
+consonant(t).
+consonant(u). 
+consonant(v).
+consonant(w).
+consonant(x).
+consonant(z).
 
 
-/*Строчные буквы латиницы*/
-consonant(98). /*B*/
-consonant(99).
-consonant(100).
 
-consonant(102). /*F*/
-consonant(103).
-consonant(104).
 
-consonant(106). /*J*/
-consonant(107).
-consonant(108).
-consonant(109).
-consonant(110).
 
-consonant(112). /*P*/
-consonant(113).
-consonant(114).
-consonant(115).
-consonant(116).
 
-consonant(118). /*V*/
-consonant(119).
-consonant(120).
-consonant(122).
+
+
+
+
+
+
 
 
