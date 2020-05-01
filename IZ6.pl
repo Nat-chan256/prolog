@@ -1,7 +1,8 @@
-get_graph_edges(V,E):-get_V(V),nl,get_edges(V,E), nl, write("Наибольшее паросочетание:"), findMaxMatching(E, List), write(List).
+get_graph_edges(V,E):-get_V(V),nl,get_edges(V,E), nl, write("Наибольшее паросочетание:"), findMaxMatching(V, E, List), write(List).
 
-findMaxMatching(E, List):- maxMatching(E, Matching), findExpendingWay(Matching, E, ExpWay), symmetricSubtraction(Matching, ExpWay, List), !.
-findMaxMatching(E, List):- maxMatching(E, List).
+/*Поиск наибольшего паросочетания*/
+findMaxMatching(V, E, List):- maxMatching(E, Matching), findExpendingWay(Matching, E, V, ExpWay), symmetricSubtraction(Matching, ExpWay, List), !.
+findMaxMatching(_, E, List):- maxMatching(E, List).
 
 /*Симметрическая разность расширяющего пути и паросочетания*/
 symmetricSubtraction(Matching, ExpWay, ResultMatching):- symmetricSubtraction(Matching, ExpWay, [], ResultMatching).
@@ -26,7 +27,6 @@ r_str(X,A,B):-append(B,[X],B1),get0(X1),r_str(X1,A,B1).
 
 get_edge(V,[V1,V2]):-write("Edge"),nl,read_str(X),name(V1,X),check_vertex(V,V1),
 						read_str(Y),name(V2,Y),check_vertex(V,V2).
-
 check_vertex([V1|_],V1):-!.
 check_vertex([_|T],V1):-check_vertex(T,V1).
 
@@ -45,36 +45,38 @@ hasAdjacent([_,X], [[_,X]|_]):- !.
 hasAdjacent(Edge, [_|T]):- hasAdjacent(Edge, T).
 
 /*Нахождение расширяющего пути*/
-findExpendingWay(Matching, E, ExpWay):- findExpendingWay(Matching, E, [], ExpWay).
-findExpendingWay(_, [], [], []):- !, fail.
-findExpendingWay(Matching, [H|T], [], ExpWay):- not(contains(Matching, H)), findAdjacent(H, Matching, AdjEdge), append([H], [AdjEdge], CurWay), findNextEdge(CurWay, T, NextEdge), in_list_exlude(T, NextEdge, NewTail), findExpendingWay(Matching, NewTail, CurWay, ExpWay), !.
-findExpendingWay(Matching, [_|T], [], ExpWay):- findExpendingWay(Matching, T, [], ExpWay),!.
-findExpendingWay(_, [], CurWay, CurWay):- !.
-findExpendingWay(Matching, E, CurWay, ExpWay):- findNextEdge(CurWay, Matching, NextEdge), NextEdge \= [], append(CurWay, [NextEdge], NewCurWay), findNextEdge(NewCurWay, E, NewNextEdge), NewNextEdge \= [], append(NewCurWay, [NewNextEdge], NewCurWay1), in_list_exlude(E, NewNextEdge, NewE), findExpendingWay(Matching, NewE, NewCurWay1, ExpWay),!.
+findExpendingWay(Matching, E, V, ExpWay):- in_list(V, Vertex1), not(isInMatching(Matching, Vertex1)), in_list(V, Vertex2), not(isInMatching(Matching, Vertex2)), Vertex1 \= Vertex2, makeAlternateWay(V, E, Matching, Vertex1, Vertex2, ExpWay).
+/**/
+isInMatching([],_):- !, fail.
+isInMatching([[X,_]|_], X):-!.
+isInMatching([[_,X]|_], X):-!.
+isInMatching([_|T], X):- isInMatching(T, X).
 
-findNextEdge(Way, ListOfEdges, NextEdge):- lastElem(Way, Last1), in_list_exlude(Way, Last1, ShortenedWay), lastElem(ShortenedWay, Last2), findNextEdge(ListOfEdges, Last1, Last2, NextEdge).
-findNextEdge([], _, _, []):- !.
-findNextEdge(ListOfEdges, Last1, Last2, NextEdge):- findAdjacent(Last1, ListOfEdges, AdjEdge), not(findAdjacent(Last2, ListOfEdges, AdjEdge)), NextEdge = AdjEdge, !.
-findNextEdge(ListOfEdges, Last1, Last2, NextEdge):- findAdjacent(Last1, ListOfEdges, AdjEdge), in_list_exlude(ListOfEdges, AdjEdge, NewList), findNextEdge(NewList, Last1, Last2, NextEdge).
+/*Построение чередующегося пути из вершины I в вершину S*/
+makeAlternateWay(V, E, Matching, I,S,Way):- incident(I, NewI, Edge, E), in_list_exlude(V,I,Tail), in_list_exlude(Tail, NewI, Tail1), makeAlternateWay(Tail1,E, Matching, NewI,S,[Edge],Way, m).
+makeAlternateWay(_,_,_,S,S,Way,Way,_):-!.
+makeAlternateWay(V,E, Matching, I,S,Cur_Way,Way, m):-in_list_exlude(V,X,Tail),(in_list1(E,[I,X]);in_list1(E,[X,I])), (in_list(Matching, [I,X]); in_list(Matching, [X,I])), append1(Cur_Way,[[I,X]],C_W), makeAlternateWay(Tail,E, Matching, X,S,C_W,Way, nm).
+makeAlternateWay(V,E, Matching, I,S,Cur_Way,Way, nm):-in_list_exlude(V,X,Tail),(in_list1(E,[I,X]);in_list1(E,[X,I])), not(in_list(Matching, [I,X])), not(in_list(Matching, [X,I])), append1(Cur_Way,[[I,X]],C_W), makeAlternateWay(Tail,E,Matching,X,S,C_W,Way,m).
 
-lastElem([H|T], Elem):- lastElem(T, H, Elem).
-lastElem([], LastElem, LastElem):-!.
-lastElem([H|T], _, Elem):- lastElem(T, H, Elem).
+/*in_list для рёбер*/
+in_list1([[X,Y]|_],[X,Y]):-!.
+in_list1([[Y,X]|_],[X,Y]):-!.
+in_list1([_|T],El):-in_list1(T,El).
 
+append1([],X,X):-!.
+append1([H|T],X,[H |Z]):-append1(T,X,Z).
+
+/*Поиск ребра, инцидентного вершине Vertex*/
+incident(Vertex, Vertex2, [Vertex, Vertex2],[[Vertex, Vertex2]|_]).
+incident(Vertex, Vertex2, [Vertex2, Vertex], [[Vertex2, Vertex]|_]).
+incident(Vertex, Vert, Edge, [_|T]):- incident(Vertex, Vert, Edge, T).
+
+in_list([El|_],El).
+in_list([_|T],El):-in_list(T,El).
 
 in_list_exlude([El|T],El,T).
 in_list_exlude([H|T],El,[H|Tail]):-in_list_exlude(T,El,Tail).
 
-
-findAdjacent([_,_], [], []):- !.
-findAdjacent([X,Y], [[X,Z]|_],[X,Z]):- !.
-findAdjacent([X,Y], [[Z,X]|_], [Z,X]):- !.
-findAdjacent([Y,X], [[X,Z]|_], [X,Z]):- !.
-findAdjacent([Y,X], [[Z,X]|_], [Z,X]):- !.
-findAdjacent(Edge, [_|T], AdjEdge):- findAdjacent(Edge, T, AdjEdge).
-
 contains([], _):- !, fail.
 contains([H|_], H):- !.
 contains([_|T], N):- contains(T, N).
-
-
