@@ -1,12 +1,12 @@
-:- dynamic goodEvilNeutral/2, height/2,  height/2, race/2, sex/2, ringOwner/2, isildurRelative/2, diedFromSauron/2, aragornLover/2, old/2, diedInFilm/2, rohanKing/2, foughtSpider/2, usedBow/2, servedDenator/2, denatorsSon/2.
+:- dynamic goodEvilNeutral/2, race/2, sex/2, ringOwner/2, isildurRelative/2, diedFromSauron/2, aragornLover/2, old/2, diedInFilm/2, rohanKing/2, foughtSpider/2, usedBow/2, servedDenator/2, denatorsSon/2.
 
-startAkinator:- see('characters.txt'), readCharacter, seen, question1(Ans1), question2(Ans2), question3(Ans3), question4(Ans4), question5(Ans5), question6(Ans3, Ans4, Ans5, Ans6), check6(Ans1, Ans2, Ans3, Ans4, Ans5, Ans6), !.
+startAkinator:- see('characters.txt'), readCharacter, seen, question1(Ans1), question3(Ans3), question4(Ans4), question5(Ans5), question6(Ans3, Ans4, Ans5, Ans6), check6(Ans1, Ans3, Ans4, Ans5, Ans6), !.
 /*startAkinator(Ans1, Ans2):- question3(Ans3), check3(Ans1, Ans2, Ans3).*/
 /*startAkinator(Ans1, Ans2, Ans3):- question4(Ans4), check4(Ans1, Ans2, Ans3, Ans4).*/
 /*startAkinator(Ans1, Ans2, Ans3, Ans4):- question5(Ans3, Ans4, Ans5), check5(Ans1, Ans2, Ans3, Ans4, Ans5).*/
 /*startAkinator(Ans1, Ans2, Ans3, Ans4, Ans5):- question6(Ans3, Ans5, Ans6), check6(Ans1, Ans2, Ans3, Ans4, Ans5, Ans6).*/
-startAkinator(Ans1, Ans2, Ans3, Ans4, Ans5, Ans6):- question7(Ans3, Ans6, Ans7), check7(Ans1, Ans2, Ans3, Ans4, Ans5, Ans6, Ans7).
-startAkinator(Ans1, Ans2, Ans3, Ans4, Ans5, Ans6, Ans7):- question8(Ans3, Ans7, Ans8), check8(Ans1, Ans2, Ans3, Ans4, Ans5, Ans6, Ans7, Ans8).
+startAkinator(Ans1, Ans3, Ans4, Ans5, Ans6):- question7(Ans3, Ans6, Ans7), check7(Ans1, Ans3, Ans4, Ans5, Ans6, Ans7).
+startAkinator(Ans1, Ans3, Ans4, Ans5, Ans6, Ans7):- question8(Ans3, Ans7, Ans8), check8(Ans1, Ans3, Ans4, Ans5, Ans6, Ans7, Ans8).
 
 /*Персонажи в файле расположены след. образом:*/
 /*Имя персонажа*/
@@ -16,16 +16,18 @@ readCharacter:- !.
 
 /*------------------------------------Ассерты-----------------------------------*/
 assertGEN(_, []):- !.
-assertGEN(Character, [H|T]):- asserta(goodEvilNeutral(Character, H)), assertHeight(Character, T).
-
-assertHeight(_, []):- !.
-assertHeight(Character, [H|T]):- asserta(height(Character, H)), assertRace(Character, T).
+assertGEN(Character, [H|T]):- asserta(goodEvilNeutral(Character, H)), assertRace(Character, T).
 
 assertRace(_, []):- !.
-assertRace(Character, [H|T]):- asserta(race(Character, H)), assertSex(Character, T).
+assertRace(Character, [H|T]):- asserta(race(Character, H)), assertIsildurRelative(Character, T).
+
+assertIsildurRelative(_,[]):- !.
+assertIsildurRelative(Character,[H|T]):- asserta(isildurRelative(Character,H)), assertSex(Character, T).
 
 assertSex(_, []):- !.
 assertSex(Character, [H|T]):- asserta(sex(Character, H)), race(Character, Race), Race = 1, H = 1, assertArogornLover(Character, T), !.
+assertSex(Character, [H|T]):- race(Character, Race), Race = 1, H = 0, assertUsedBow(Character, T),!.
+assertSex(Character, [_|T]):- isildurRelative(Character,IsRealative), IsRealative = 0, assertDiedSauron(Character, T),!.
 assertSex(Character, [_|T]):- assertRingOwner(Character, T).
 
 assertArogornLover(_, []):- !.
@@ -33,9 +35,8 @@ assertArogornLover(Character, [H|_]):- asserta(aragornLover(Character, H)).
 
 assertRingOwner(_, []):- !.
 assertRingOwner(Character, [H|T]):- asserta(ringOwner(Character, H)), H = 0, assertOld(Character, T), !.
-assertRingOwner(Character, [_|T]):- race(Character, Race), Race = 1, assertUsedBow(Character, T), !.
 assertRingOwner(Character, [_|T]):- race(Character, Race), Race = 3, assertFoughtSpider(Character, T),!.
-assertRingOwner(Character, [_|T]):- assertIsildurRelative(Character, T).
+assertRingOwner(Character, [_|T]):- assertDiedInFilm(Character, T).
 
 assertOld(_, []):- !.
 assertOld(Character, [H|_]):- asserta(old(Character, H)).
@@ -48,10 +49,6 @@ assertFoughtSpider(Character, [H|T]):- asserta(foughtSpider(Character, H)), H = 
 
 assertServedDenator(_, []):- !.
 assertServedDenator(Character, [H|_]):- asserta(servedDenator(Character, H)).
-
-assertIsildurRelative(_,[]):- !.
-assertIsildurRelative(Character,[H|T]):- asserta(isildurRelative(Character,H)), H = 0, assertDiedSauron(Character, T), !.
-assertIsildurRelative(Character,[_|T]):- assertDiedInFilm(Character, T).
 
 assertDiedSauron(_, []):- !.
 assertDiedSauron(Character, [H|_]):- asserta(diedFromSauron(Character, H)).
@@ -74,11 +71,11 @@ question1(Answer):- write('На какой стороне сражался Ваш персонаж?'), nl,
     write('2. Персонаж скорее нейтрален.'), nl,
     read(Answer).
 
-question2(Answer):- write('Каков рост Вашего персонажа?'), nl,
+/*question2(Answer):- write('Каков рост Вашего персонажа?'), nl,
     write('0. Ниже человеческого.'), nl,
     write('1. Человеческий.'), nl,
     write('2. Выше человеческого.'), nl,
-    read(Answer).
+    read(Answer).*/
 
 question3(Answer):- write('Раса Вашего персонажа:'), nl,
     write('0. Человек'), nl,
@@ -88,6 +85,7 @@ question3(Answer):- write('Раса Вашего персонажа:'), nl,
     write('4. Маг'), nl,
     write('5. Назгул'), nl,
     write('6. Энт'), nl,
+    write('7. Другое'), nl,
     read(Answer).
 
 question4(Answer):-  write('Состоит ли Ваш персонаж в родстве с Исилдуром?'), nl,
@@ -143,7 +141,7 @@ question8(0, 1, Answer):- write('Ваш персонаж - сын Дэнетора II(правителя Гондор
     write('1. Нет'), nl,
     read(Answer), !.
 
-check2(Ans1, Ans2):- goodEvilNeutral(Char, Ans1), height(Char, Ans2), write('Вы загадали '), write_list(Char), deleteFacts, !.
+/*check2(Ans1, Ans2):- goodEvilNeutral(Char, Ans1), height(Char, Ans2), write('Вы загадали '), write_list(Char), deleteFacts, !.
 check2(Ans1, Ans2):-startAkinator(Ans1, Ans2).
 
 check3(Ans1, Ans2, Ans3):-  goodEvilNeutral(Char, Ans1), height(Char, Ans2), race(Char, Ans3), write('Вы загадали '), write_str(Char), deleteFacts, !.
@@ -154,30 +152,39 @@ check4(Ans1, Ans2, Ans3, Ans4):-startAkinator(Ans1, Ans2, Ans3, Ans4).
 
 check5(Ans1, Ans2, Ans3, Ans4, Ans5):-  goodEvilNeutral(Char, Ans1), height(Char, Ans2), race(Char, Ans3), sex(Char, Ans4), aragornLover(Char, Ans5),  write('Вы загадали '), write_str(Char), deleteFacts, !.
 check5(Ans1, Ans2, Ans3, Ans4, Ans5):-  goodEvilNeutral(Char, Ans1), height(Char, Ans2), race(Char, Ans3), sex(Char, Ans4), ringOwner(Char, Ans5),  write('Вы загадали '), write_str(Char), deleteFacts, !.
-check5(Ans1, Ans2, Ans3, Ans4, Ans5):-startAkinator(Ans1, Ans2, Ans3, Ans4, Ans5).
+check5(Ans1, Ans2, Ans3, Ans4, Ans5):-startAkinator(Ans1, Ans2, Ans3,
+Ans4, Ans5).*/
 
-check6(Ans1, Ans2, Ans3, Ans4, Ans5, Ans6):- goodEvilNeutral(Char, Ans1), height(Char, Ans2), race(Char, Ans3), sex(Char, Ans4), ringOwner(Char, Ans5), old(Char, Ans6), write('Вы загадали '), write_str(Char), deleteFacts, !.
-check6(Ans1, Ans2, Ans3, Ans4, Ans5, Ans6):- goodEvilNeutral(Char, Ans1), height(Char, Ans2), race(Char, Ans3), sex(Char, Ans4), ringOwner(Char, Ans5), foughtSpider(Char, Ans6), write('Вы загадали '), write_str(Char), deleteFacts,!.
-check6(Ans1, Ans2, Ans3, Ans4, Ans5, Ans6):- goodEvilNeutral(Char, Ans1), height(Char, Ans2), race(Char, Ans3), sex(Char, Ans4), ringOwner(Char, Ans5), usedBow(Char, Ans6), write('Вы загадали '), write_str(Char), deleteFacts, !.
-check6(Ans1, Ans2, Ans3, Ans4, Ans5, Ans6):- goodEvilNeutral(Char, Ans1), height(Char, Ans2), race(Char, Ans3), sex(Char, Ans4), ringOwner(Char, Ans5), isildurRelative(Char, Ans6), write('Вы загадали '), write_str(Char), deleteFacts, !.
-check6(Ans1, Ans2, Ans3, Ans4, Ans5, Ans6):-startAkinator(Ans1, Ans2, Ans3, Ans4, Ans5, Ans6).
+check6(Ans1, Ans3, Ans4, Ans5, Ans6):- goodEvilNeutral(Char, Ans1), race(Char, Ans3), isildurRelative(Char, Ans4), sex(Char, Ans5), ringOwner(Char, Ans6), write('Вы загадали '), write_str(Char), write('. Верно?\n0.Да\n1.Нет\n'), read(Answer), checkUserAnswer1(Answer,Ans1, Ans3, Ans4, Ans5, Ans6), !.
+check6(Ans1, Ans3, Ans4, Ans5, Ans6):- goodEvilNeutral(Char, Ans1), race(Char, Ans3), isildurRelative(Char, Ans4), sex(Char, Ans5), usedBow(Char, Ans6), write('Вы загадали '), write_str(Char), write('. Верно?\n0.Да\n1.Нет\n'), read(Answer), checkUserAnswer1(Answer,Ans1, Ans3, Ans4, Ans5, Ans6), !.
+check6(Ans1, Ans3, Ans4, Ans5, Ans6):- goodEvilNeutral(Char, Ans1), race(Char, Ans3), isildurRelative(Char, Ans4), sex(Char, Ans5), aragornLover(Char, Ans6), write('Вы загадали '), write_str(Char), write('. Верно?\n0.Да\n1.Нет\n'), read(Answer), checkUserAnswer1(Answer,Ans1, Ans3, Ans4, Ans5, Ans6), !.
+check6(Ans1, Ans3, Ans4, Ans5, Ans6):- goodEvilNeutral(Char, Ans1), race(Char, Ans3), isildurRelative(Char, Ans4), sex(Char, Ans5), diedFromSauron(Char, Ans6), write('Вы загадали '), write_str(Char), write('. Верно?\n0.Да\n1.Нет\n'), read(Answer), checkUserAnswer1(Answer,Ans1, Ans3, Ans4, Ans5, Ans6), !.
+check6(Ans1, Ans3, Ans4, Ans5, Ans6):-startAkinator(Ans1, Ans3, Ans4, Ans5, Ans6).
 
-check7(Ans1, Ans2, Ans3, Ans4, Ans5, Ans6, Ans7):- goodEvilNeutral(Char, Ans1), height(Char, Ans2), race(Char, Ans3), sex(Char, Ans4), ringOwner(Char, Ans5), foughtSpider(Char, Ans6), servedDenator(Char, Ans7),  write('Вы загадали '), write_str(Char), deleteFacts, !.
-check7(Ans1, Ans2, Ans3, Ans4, Ans5, Ans6, Ans7):- goodEvilNeutral(Char, Ans1), height(Char, Ans2), race(Char, Ans3), sex(Char, Ans4), ringOwner(Char, Ans5), isildurRelative(Char, Ans6), diedFromSauron(Char, Ans7),  write('Вы загадали '), write_str(Char), deleteFacts, !.
-check7(Ans1, Ans2, Ans3, Ans4, Ans5, Ans6, Ans7):-startAkinator(Ans1, Ans2, Ans3, Ans4, Ans5, Ans6, Ans7).
+check7(Ans1, Ans3, Ans4, Ans5, Ans6, Ans7):- goodEvilNeutral(Char, Ans1), race(Char, Ans3), isildurRelative(Char, Ans4), sex(Char, Ans5), ringOwner(Char, Ans6), diedInFilm(Char, Ans7), write('Вы загадали '), write_str(Char), write('. Верно?\n0.Да\n1.Нет\n'), read(Answer), checkUserAnswer2(Answer,Ans1, Ans3, Ans4, Ans5, Ans6, Ans7), !.
+check7(Ans1, Ans3, Ans4, Ans5, Ans6, Ans7):- goodEvilNeutral(Char, Ans1), race(Char, Ans3), isildurRelative(Char, Ans4), sex(Char, Ans5), ringOwner(Char, Ans6), old(Char, Ans7), write('Вы загадали '), write_str(Char), write('. Верно?\n0.Да\n1.Нет\n'), read(Answer), checkUserAnswer2(Answer,Ans1, Ans3, Ans4, Ans5, Ans6, Ans7), !.
+check7(Ans1, Ans3, Ans4, Ans5, Ans6, Ans7):- goodEvilNeutral(Char, Ans1), race(Char, Ans3), isildurRelative(Char, Ans4), sex(Char, Ans5), ringOwner(Char, Ans6), foughtSpider(Char, Ans7), write('Вы загадали '), write_str(Char), write('. Верно?\n0.Да\n1.Нет\n'), read(Answer), checkUserAnswer2(Answer,Ans1, Ans3, Ans4, Ans5, Ans6, Ans7), !.
+check7(Ans1, Ans3, Ans4, Ans5, Ans6, Ans7):-startAkinator(Ans1, Ans3, Ans4, Ans5, Ans6, Ans7).
 
-check8(Ans1, Ans2, Ans3, Ans4, Ans5, Ans6, Ans7, Ans8):-  goodEvilNeutral(Char, Ans1), height(Char, Ans2), race(Char, Ans3), sex(Char, Ans4), ringOwner(Char, Ans5), isildurRelative(Char, Ans6), diedInFilm(Char, Ans7), denatorsSon(Char, Ans8), write('Вы загадали '), write_str(Char), deleteFacts, !.
-check8(Ans1, Ans2, Ans3, Ans4, Ans5, Ans6, Ans7, Ans8):- write("Персонаж не был найден в базе данных.Хотите его добавить?"), nl, write("0. Да\n1.Нет\n"), read(Answer), checkUsersAnswer(Answer, [Ans1, Ans2, Ans3, Ans4, Ans5, Ans6, Ans7, Ans8]).
+check8(Ans1, Ans3, Ans4, Ans5, Ans6, Ans7, Ans8):-  goodEvilNeutral(Char, Ans1), race(Char, Ans3), isildurRelative(Char, Ans4), sex(Char, Ans5), ringOwner(Char, Ans6), diedInFilm(Char, Ans7), denatorsSon(Char, Ans8), write('Вы загадали '), write_str(Char), deleteFacts, !.
+check8(Ans1, Ans3, Ans4, Ans5, Ans6, Ans7, Ans8):-  goodEvilNeutral(Char, Ans1), race(Char, Ans3), isildurRelative(Char, Ans4), sex(Char, Ans5), ringOwner(Char, Ans6), foughtSpider(Char, Ans7), servedDenator(Char, Ans8), write('Вы загадали '), write_str(Char), deleteFacts, !.
+check8(Ans1, Ans3, Ans4, Ans5, Ans6, Ans7, Ans8):-  goodEvilNeutral(Char, Ans1), race(Char, Ans3), isildurRelative(Char, Ans4), sex(Char, Ans5), ringOwner(Char, Ans6), diedInFilm(Char, Ans7), rohanKing(Char, Ans8), write('Вы загадали '), write_str(Char), deleteFacts, !.
+check8(Ans1, Ans3, Ans4, Ans5, Ans6, Ans7, Ans8):- write("Персонаж не был найден в базе данных.Хотите его добавить?"), nl, write("0. Да\n1.Нет\n"), read(Answer), checkUsersAnswer(Answer, [Ans1, Ans3, Ans4, Ans5, Ans6, Ans7, Ans8]), deleteFacts.
 
 checkUsersAnswer(0, List):- write('Введите имя персонажа: '), read_str(CharName), name(Character, CharName), addCharacter(Character, List), !.
 checkUsersAnswer(1, _):- !.
 
-deleteFacts:- deleteGEN, deleteHeight, deleteRace, deleteSex, deleteRingOwner, deleteIsildurRelative, deleteDiedFromSauron, deleteAragornLover, deleteOld, deleteDiedInFilm, deleteRohanKing, deleteFoughtSpider, deleteUsedBow, deleteServedDenator, deleteDenatorsSon.
+checkUserAnswer1(0, _, _, _, _, _):- deleteFacts, !.
+checkUserAnswer1(1, Ans1, Ans3, Ans4, Ans5, Ans6):- startAkinator(Ans1, Ans3, Ans4, Ans5, Ans6).
+
+checkUserAnswer2(0, _, _, _, _, _, _):- deleteFacts, !.
+checkUserAnswer2(1, Ans1, Ans3, Ans4, Ans5, Ans6, Ans7):- startAkinator(Ans1, Ans3, Ans4, Ans5, Ans6, Ans7).
+
+
+deleteFacts:- deleteGEN, deleteRace, deleteSex, deleteRingOwner, deleteIsildurRelative, deleteDiedFromSauron, deleteAragornLover, deleteOld, deleteDiedInFilm, deleteRohanKing, deleteFoughtSpider, deleteUsedBow, deleteServedDenator, deleteDenatorsSon.
 
 /*-------------------------------Удаление фактов------------------------------------*/
 deleteGEN:-  repeat,(goodEvilNeutral(X,Y) -> retract(goodEvilNeutral(X,Y)), fail;X=nil,Y=nil, !).
-
-deleteHeight:-  repeat,(height(X,Y) -> retract(height(X,Y)), fail;X=nil,Y=nil, !).
 
 deleteRace:- repeat,(race(X,Y) -> retract(race(X,Y)), fail;X=nil,Y=nil, !).
 
