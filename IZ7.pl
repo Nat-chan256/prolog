@@ -1,12 +1,12 @@
 :- dynamic goodEvilNeutral/2, height/2,  height/2, race/2, sex/2, ringOwner/2, isildurRelative/2, diedFromSauron/2, aragornLover/2, old/2, diedInFilm/2, rohanKing/2, foughtSpider/2, usedBow/2, servedDenator/2, denatorsSon/2.
 
-startAkinator:- see('characters.txt'), readCharacter, seen, question1(Ans1), question2(Ans2), check2(Ans1, Ans2).
-startAkinator(Ans1, Ans2):- question3(Ans3), check3(Ans1, Ans2, Ans3).
-startAkinator(Ans1, Ans2, Ans3):- question4(Ans4), check4(Ans1, Ans2, Ans3, Ans4).
-startAkinator(Ans1, Ans2, Ans3, Ans4):- question5(Ans3, Ans4, Ans5), check5(Ans1, Ans2, Ans3, Ans4, Ans5).
-startAkinator(Ans1, Ans2, Ans3, Ans4, Ans5):- question6(Ans3, Ans5, Ans6), check6(Ans1, Ans2, Ans3, Ans4, Ans5, Ans6).
+startAkinator:- see('characters.txt'), readCharacter, seen, question1(Ans1), question2(Ans2), question3(Ans3), question4(Ans4), question5(Ans5), question6(Ans3, Ans4, Ans5, Ans6), check6(Ans1, Ans2, Ans3, Ans4, Ans5, Ans6), !.
+/*startAkinator(Ans1, Ans2):- question3(Ans3), check3(Ans1, Ans2, Ans3).*/
+/*startAkinator(Ans1, Ans2, Ans3):- question4(Ans4), check4(Ans1, Ans2, Ans3, Ans4).*/
+/*startAkinator(Ans1, Ans2, Ans3, Ans4):- question5(Ans3, Ans4, Ans5), check5(Ans1, Ans2, Ans3, Ans4, Ans5).*/
+/*startAkinator(Ans1, Ans2, Ans3, Ans4, Ans5):- question6(Ans3, Ans5, Ans6), check6(Ans1, Ans2, Ans3, Ans4, Ans5, Ans6).*/
 startAkinator(Ans1, Ans2, Ans3, Ans4, Ans5, Ans6):- question7(Ans3, Ans6, Ans7), check7(Ans1, Ans2, Ans3, Ans4, Ans5, Ans6, Ans7).
-startAkinator(Ans1, Ans2, Ans3, Ans4, Ans5, Ans6, Ans7):- question8(Ans7, Ans8), check8(Ans1, Ans2, Ans3, Ans4, Ans5, Ans6, Ans7, Ans8).
+startAkinator(Ans1, Ans2, Ans3, Ans4, Ans5, Ans6, Ans7):- question8(Ans3, Ans7, Ans8), check8(Ans1, Ans2, Ans3, Ans4, Ans5, Ans6, Ans7, Ans8).
 
 /*Персонажи в файле расположены след. образом:*/
 /*Имя персонажа*/
@@ -87,57 +87,58 @@ question3(Answer):- write('Раса Вашего персонажа:'), nl,
     write('3. Хоббит'), nl,
     write('4. Маг'), nl,
     write('5. Назгул'), nl,
+    write('6. Энт'), nl,
     read(Answer).
 
-question4(Answer):-  write('Пол Вашего персонажа:'), nl,
+question4(Answer):-  write('Состоит ли Ваш персонаж в родстве с Исилдуром?'), nl,
+    write('0. Да'), nl,
+    write('1. Нет'), nl,
+    read(Answer).
+
+question5(Answer):-  write('Пол Вашего персонажа:'), nl,
     write('0. Мужской'), nl,
     write('1. Женский'), nl,
     read(Answer).
 
-question5(1, 1, Answer):- write('Ваш персонаж - возлюбленная Арагорна?'), nl,
+question6(1,1,1,Answer):- write('Ваш персонаж - возлюбленная Арагорна?'), nl,
     write('0. Да'), nl,
     write('1. Нет'), nl,
     read(Answer), !.
-question5(_, _, Answer):- write('Был ли Ваш персонаж владельцем кольца?'), nl,
+question6(1,1,0, Answer):-  write('Использовал ли Ваш персонаж лук в качестве основного оружия'), nl,
+    write('0. Да'), nl,
+    write('1. Нет'), nl,
+    read(Answer), !.
+question6(0,0,0,Answer):-  write('Ваш персонаж погиб от рук Саурона?'), nl,
+    write('0. Да'), nl,
+    write('1. Нет'), nl,
+    read(Answer),!.
+question6(_,_,_,Answer):-  write('Был ли Ваш персонаж владельцем кольца?'), nl,
     write('0. Да'), nl,
     write('1. Нет'), nl,
     read(Answer).
 
-question6(3, 0, Answer):-  write('Ваш персонаж'), nl,
+question7(3,0,Answer):-  write('Ваш персонаж'), nl,
     write('0. Стар'), nl,
     write('1. Молод'), nl,
     read(Answer), !.
-question6(3, 1, Answer):-  write('Сражался ли Ваш персонаж с пауком?'), nl,
+question7(3,1,Answer):-  write('Сражался ли Ваш персонаж с пауком?'), nl,
     write('0. Да'), nl,
     write('1. Нет'), nl,
     read(Answer), !.
-question6(1, 1, Answer):-  write('Использовал ли Ваш персонаж лук в качестве основного оружия'), nl,
-    write('0. Да'), nl,
-    write('1. Нет'), nl,
-    read(Answer), !.
-question6(_, _, Answer):-  write('Состоит ли Ваш персонаж в родстве с Исилдуром?'), nl,
-    write('0. Да'), nl,
-    write('1. Нет'), nl,
-    read(Answer).
-
-question7(3, 1, Answer):-  write('Ваш персонаж служил Дэнетору II(правителю Гондора)?'), nl,
-    write('0. Да'), nl,
-    write('1. Нет'), nl,
-    read(Answer),!.
-question7(_, 0, Answer):-  write('Ваш персонаж погиб от рук Саурона?'), nl,
-    write('0. Да'), nl,
-    write('1. Нет'), nl,
-    read(Answer),!.
 question7(_, _, Answer):-  write('Ваш персонаж погиб в фильме?'), nl,
     write('0. Да'), nl,
     write('1. Нет'), nl,
     read(Answer).
 
-question8(0, Answer):- write('Ваш персонаж - король Рохана?'), nl,
+question8(3,1,Answer):- write('Ваш персонаж служил Дэнетору II(правителю Гондора)?'), nl,
+    write('0. Да'), nl,
+    write('1. Нет'), nl,
+    read(Answer),!.
+question8(0, 0, Answer):- write('Ваш персонаж - король Рохана?'), nl,
     write('0. Да'), nl,
     write('1. Нет'), nl,
     read(Answer), !.
-question8(1, Answer):- write('Ваш персонаж - сын Дэнетора II(правителя Гондора)?'), nl,
+question8(0, 1, Answer):- write('Ваш персонаж - сын Дэнетора II(правителя Гондора)?'), nl,
     write('0. Да'), nl,
     write('1. Нет'), nl,
     read(Answer), !.
@@ -166,9 +167,9 @@ check7(Ans1, Ans2, Ans3, Ans4, Ans5, Ans6, Ans7):- goodEvilNeutral(Char, Ans1), 
 check7(Ans1, Ans2, Ans3, Ans4, Ans5, Ans6, Ans7):-startAkinator(Ans1, Ans2, Ans3, Ans4, Ans5, Ans6, Ans7).
 
 check8(Ans1, Ans2, Ans3, Ans4, Ans5, Ans6, Ans7, Ans8):-  goodEvilNeutral(Char, Ans1), height(Char, Ans2), race(Char, Ans3), sex(Char, Ans4), ringOwner(Char, Ans5), isildurRelative(Char, Ans6), diedInFilm(Char, Ans7), denatorsSon(Char, Ans8), write('Вы загадали '), write_str(Char), deleteFacts, !.
-check8(Ans1, Ans2, Ans3, Ans4, Ans5, Ans6, Ans7, Ans8):- write("Персонаж не был найден в базе данных.Хотите его добавить?"), nl, write("0. Да\n1.Нет"), read(Answer), checkUsersAnswer(Answer, [Ans1, Ans2, Ans3, Ans4, Ans5, Ans6, Ans7, Ans8]).
+check8(Ans1, Ans2, Ans3, Ans4, Ans5, Ans6, Ans7, Ans8):- write("Персонаж не был найден в базе данных.Хотите его добавить?"), nl, write("0. Да\n1.Нет\n"), read(Answer), checkUsersAnswer(Answer, [Ans1, Ans2, Ans3, Ans4, Ans5, Ans6, Ans7, Ans8]).
 
-checkUsersAnswer(0, List):- write('Введите имя персонажа: '), trace, read_str(CharName), addCharacter(CharName, List), !.
+checkUsersAnswer(0, List):- write('Введите имя персонажа: '), read_str(CharName), name(Character, CharName), addCharacter(Character, List), !.
 checkUsersAnswer(1, _):- !.
 
 deleteFacts:- deleteGEN, deleteHeight, deleteRace, deleteSex, deleteRingOwner, deleteIsildurRelative, deleteDiedFromSauron, deleteAragornLover, deleteOld, deleteDiedInFilm, deleteRohanKing, deleteFoughtSpider, deleteUsedBow, deleteServedDenator, deleteDenatorsSon.
@@ -210,9 +211,9 @@ write_list([]):-!.
 write_list([H|T]):- write(H), write(" "), write_list(T).
 
 write_str([]):-!.
-write_str([H|T]):- put(H), write_str(T).
+write_str([H|T]):- write(H), write_str(T).
 
-read_str(A):-get0(X),r_str(X,A,[]).
+read_str(A):-get0(X),get0(X1),r_str(X1,A,[]).
 r_str(10,A,A):-!.
 r_str(X,A,B):-append(B,[X],B1),get0(X1),r_str(X1,A,B1).
 
