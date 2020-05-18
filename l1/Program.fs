@@ -40,6 +40,12 @@ let euler n =
     if n = 1 then 1
     else sum_mutually_prime n 1 0
 
+let max_prime_divider num =
+    let rec prime_div num cur_div = 
+        if pr cur_div && num % cur_div = 0 then cur_div
+        else prime_div num (cur_div-1)
+    prime_div num num
+
 [<EntryPoint>]
 let main argv =
     let answer = euler 71
