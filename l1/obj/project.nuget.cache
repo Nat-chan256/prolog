@@ -1,0 +1,10 @@
+{
+  "version": 2,
+  "dgSpecHash": "rdPWtnuXhrLppsOCm9vr6vBbVOwgcuTFZDyYIa94y3jCTsUbz3nGaOM1ndY1NwmzGZPxZ8DX8YoSckWbyDookQ==",
+  "success": true,
+  "projectFilePath": "C:\\Users\\Natal\\source\\repos\\l1\\l1.fsproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\Natal\\.nuget\\packages\\fsharp.core\\4.7.0\\fsharp.core.4.7.0.nupkg.sha512"
+  ],
+  "logs": []
+}
