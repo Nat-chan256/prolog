@@ -1,13 +1,6 @@
-:- dynamic goodEvilNeutral/2, race/2, sex/2, ringOwner/2, isildurRelative/2, diedFromSauron/2, aragornLover/2, old/2, diedInFilm/2, rohanKing/2, foughtSpider/2, usedBow/2, servedDenator/2, denatorsSon/2, reachedRockMountain/2, usedSword/2.
+:- dynamic goodEvilNeutral/2, race/2, sex/2, ringOwner/2, isildurRelative/2, aragornLover/2, diedInFilm/2, rohanKing/2, usedBow/2, servedDenator/2, denatorsSon/2, reachedRockMountain/2, usedSword/2.
 
 startAkinator:- see('characters.txt'), readCharacter, seen, question1(Ans1), question2(Ans2), question3(Ans3), question4(Ans4), question5(Ans5), question6(Ans6), question7(Ans7), question8(Ans1,Ans2,Ans3,Ans4,Ans5,Ans6,Ans7,Ans8), check(Ans1,Ans2,Ans3,Ans4,Ans5,Ans6,Ans7,Ans8) , !.
-/*startAkinator(Ans1, Ans3, Ans4, Ans5, Ans6):- question7(Ans3, Ans6, Ans7), check7(Ans1, Ans3, Ans4, Ans5, Ans6, Ans7), !.
-startAkinator(Ans1, Ans2):- question3(Ans3), check3(Ans1, Ans2, Ans3).*/
-/*startAkinator(Ans1, Ans2, Ans3):- question4(Ans4), check4(Ans1, Ans2, Ans3, Ans4).*/
-/*startAkinator(Ans1, Ans2, Ans3, Ans4):- question5(Ans3, Ans4, Ans5), check5(Ans1, Ans2, Ans3, Ans4, Ans5).*/
-/*startAkinator(Ans1, Ans2, Ans3, Ans4, Ans5):- question6(Ans3, Ans5, Ans6), check6(Ans1, Ans2, Ans3, Ans4, Ans5, Ans6).*/
-/*startAkinator(Ans1, Ans3, Ans4, Ans5, Ans6, Ans7):- question8(Ans3, Ans7, Ans8), check8(Ans1, Ans3, Ans4, Ans5, Ans6, Ans7, Ans8). , check7(Ans1, Ans3, Ans4, Ans5, Ans6, Ans7).
-startAkinator(Ans1, Ans3, Ans4, Ans5, Ans6, Ans7):- question8(Ans3, Ans7, Ans8), check8(Ans1, Ans3, Ans4, Ans5, Ans6, Ans7, Ans8).*/
 
 /*Персонажи в файле расположены след. образом:*/
 /*Имя персонажа*/
@@ -48,20 +41,11 @@ assertUsedSword(Character, [H|_]):- asserta(usedSword(Character, H)).
 assertArogornLover(_, []):- !.
 assertArogornLover(Character, [H|_]):- asserta(aragornLover(Character, H)).
 
-assertOld(_, []):- !.
-assertOld(Character, [H|_]):- asserta(old(Character, H)).
-
 assertUsedBow(_, []):- !.
 assertUsedBow(Character, [H|_]):- asserta(usedBow(Character, H)).
 
-assertFoughtSpider(_,[]):- !.
-assertFoughtSpider(Character, [H|T]):- asserta(foughtSpider(Character, H)), H = 1,assertServedDenator(Character, T).
-
 assertServedDenator(_, []):- !.
 assertServedDenator(Character, [H|_]):- asserta(servedDenator(Character, H)).
-
-assertDiedSauron(_, []):- !.
-assertDiedSauron(Character, [H|_]):- asserta(diedFromSauron(Character, H)).
 
 assertRohanKing(_, []):- !.
 assertRohanKing(Character, [H|_]):- asserta(rohanKing(Character, H)).
@@ -76,12 +60,6 @@ question1(Answer):- write('На какой стороне сражался Ваш персонаж?'), nl,
     write('1. На стороне зла.'), nl,
     write('2. Персонаж скорее нейтрален.'), nl,
     read(Answer).
-
-/*question2(Answer):- write('Каков рост Вашего персонажа?'), nl,
-    write('0. Ниже человеческого.'), nl,
-    write('1. Человеческий.'), nl,
-    write('2. Выше человеческого.'), nl,
-    read(Answer).*/
 
 question2(Answer):- write('Раса Вашего персонажа:'), nl,
     write('0. Человек'), nl,
@@ -145,19 +123,12 @@ question8(_,_,_,_,_,_,_,Answer):- write('Ваш персонаж использовал меч?'), nl,
     read(Answer), !.
 
 check(Ans1,Ans2,Ans3,Ans4,Ans5,Ans6,Ans7,Ans8):- goodEvilNeutral(Char, Ans1), race(Char, Ans2), isildurRelative(Char, Ans3), sex(Char, Ans4), ringOwner(Char, Ans5), diedInFilm(Char, Ans6), reachedRockMountain(Char, Ans7), (servedDenator(Char, Ans8); rohanKing(Char, Ans8); denatorsSon(Char, Ans8); aragornLover(Char, Ans8); usedBow(Char, Ans8); usedSword(Char, Ans8)), write('Вы загадали '), write_str(Char), deleteFacts,!.
-check(Ans1,Ans2,Ans3,Ans4,Ans5,Ans6,Ans7,Ans8):- write('Ваш персонаж не был найден в базе данных. Хотите добавить его?\n0. Да\n1. Нет\n'), read(Answer), checkUsersAnswer(Answer, [Ans1,Ans2,Ans3,Ans4,Ans5,Ans6,Ans7,Ans8]).
+check(Ans1,Ans2,Ans3,Ans4,Ans5,Ans6,Ans7,Ans8):- write('Ваш персонаж не был найден в базе данных. Хотите добавить его?\n0. Да\n1. Нет\n'), read(Answer), checkUsersAnswer(Answer, [Ans1,Ans2,Ans3,Ans4,Ans5,Ans6,Ans7,Ans8]), deleteFacts.
 
 checkUsersAnswer(0, List):- write('Введите имя персонажа: '), read_str(CharName), name(Character, CharName), addCharacter(Character, List), !.
 checkUsersAnswer(1, _):- !.
 
-checkUserAnswer1(0, _, _, _, _, _):- deleteFacts, !.
-checkUserAnswer1(1, Ans1, Ans3, Ans4, Ans5, Ans6):- startAkinator(Ans1, Ans3, Ans4, Ans5, Ans6).
-
-checkUserAnswer2(0, _, _, _, _, _, _):- deleteFacts, !.
-checkUserAnswer2(1, Ans1, Ans3, Ans4, Ans5, Ans6, Ans7):- startAkinator(Ans1, Ans3, Ans4, Ans5, Ans6, Ans7).
-
-
-deleteFacts:- deleteGEN, deleteRace, deleteSex, deleteRingOwner, deleteIsildurRelative, deleteDiedFromSauron, deleteAragornLover, deleteOld, deleteDiedInFilm, deleteRohanKing, deleteFoughtSpider, deleteUsedBow, deleteServedDenator, deleteDenatorsSon.
+deleteFacts:- deleteGEN, deleteRace, deleteSex, deleteRingOwner, deleteIsildurRelative, deleteAragornLover, deleteDiedInFilm, deleteRohanKing, deleteUsedBow, deleteServedDenator, deleteDenatorsSon, deleteReachedRockMountain, deleteUsedSword.
 
 /*-------------------------------Удаление фактов------------------------------------*/
 deleteGEN:-  repeat,(goodEvilNeutral(X,Y) -> retract(goodEvilNeutral(X,Y)), fail;X=nil,Y=nil, !).
@@ -170,23 +141,21 @@ deleteRingOwner:- repeat,(ringOwner(X,Y) -> retract(ringOwner(X,Y)), fail;X=nil,
 
 deleteIsildurRelative:- repeat,(isildurRelative(X,Y) -> retract(isildurRelative(X,Y)), fail;X=nil,Y=nil, !).
 
-deleteDiedFromSauron:- repeat,(diedFromSauron(X,Y) -> retract(diedFromSauron(X,Y)), fail;X=nil,Y=nil, !).
-
 deleteAragornLover:- repeat,(aragornLover(X,Y) -> retract(aragornLover(X,Y)), fail;X=nil,Y=nil, !).
-
-deleteOld:-  repeat,(old(X,Y) -> retract(old(X,Y)), fail;X=nil,Y=nil, !).
 
 deleteDiedInFilm:- repeat,(diedInFilm(X,Y) -> retract(diedInFilm(X,Y)), fail;X=nil,Y=nil, !).
 
 deleteRohanKing:- repeat,(rohanKing(X,Y) -> retract(rohanKing(X,Y)), fail;X=nil,Y=nil, !).
-
-deleteFoughtSpider:- repeat,(foughtSpider(X,Y) -> retract(foughtSpider(X,Y)), fail;X=nil,Y=nil, !).
 
 deleteUsedBow:- repeat,(usedBow(X,Y) -> retract(usedBow(X,Y)), fail;X=nil,Y=nil, !).
 
 deleteServedDenator:-  repeat,(servedDenator(X,Y) -> retract(servedDenator(X,Y)), fail;X=nil,Y=nil, !).
 
 deleteDenatorsSon:- repeat,(denatorsSon(X,Y) -> retract(denatorsSon(X,Y)), fail;X=nil,Y=nil, !).
+
+deleteReachedRockMountain:- repeat,(reachedRockMountain(X,Y) -> retract(reachedRockMountain(X,Y)), fail;X=nil,Y=nil, !).
+
+deleteUsedSword:- repeat,(usedSword(X,Y) -> retract(usedSword(X,Y)), fail;X=nil,Y=nil, !).
 
 addCharacter(CharName, List):- append('characters.txt'), nl, write(CharName), nl, write_list(List), told.
 
