@@ -1,13 +1,15 @@
 get_graph_edges(V,E):-get_V(V),nl,get_edges(V,E), nl, write("Наибольшее паросочетание:"), findMaxMatching(V, E, List), write(List).
 
 /*Поиск наибольшего паросочетания*/
-findMaxMatching(V, E, List):- maxMatching(E, Matching), findExpendingWay(Matching, E, V, ExpWay), symmetricSubtraction(Matching, ExpWay, List), !.
-findMaxMatching(_, E, List):- maxMatching(E, List).
+findMaxMatching(V, E, List):- maxMatching(E, Matching), isMaxMatching(V, E, Matching, List).
+
+isMaxMatching(V, E, Matching, List):- findExpendingWay(Matching, E, V, ExpWay), symmetricSubtraction(Matching, ExpWay, NewMatching), isMaxMatching(V, E, NewMatching, List),!.
+isMaxMatching(_, _, Matching, Matching).
 
 /*Симметрическая разность расширяющего пути и паросочетания*/
 symmetricSubtraction(Matching, ExpWay, ResultMatching):- symmetricSubtraction(Matching, ExpWay, [], ResultMatching).
 symmetricSubtraction(Matching, [], CurSub, ResultMatching):- append(Matching, CurSub, ResultMatching), !.
-symmetricSubtraction(Matching, [H|T], CurSub, ResultMatching):- not(contains(Matching, H)), append(CurSub, [H], NewSub), symmetricSubtraction(Matching, T, NewSub, ResultMatching),!.
+symmetricSubtraction(Matching, [H|T], CurSub, ResultMatching):- not(in_list1(Matching, H)), append(CurSub, [H], NewSub), symmetricSubtraction(Matching, T, NewSub, ResultMatching),!.
 symmetricSubtraction(Matching, [H|T], CurSub, ResultMatching):- in_list_exlude(Matching, H, NewMatching), symmetricSubtraction(NewMatching, T, CurSub, ResultMatching).
 
 get_V(V):- write('Количество вершин:'),read(N),write("Vertexes"),nl,N1 is N+1,get_V(V1,N1),del_1st(V1,V).
@@ -33,7 +35,7 @@ check_vertex([_|T],V1):-check_vertex(T,V1).
 /*Поиск максимального паросочетания*/
 maxMatching([],[]):-!.
 maxMatching([H|T], ResultMatching):- maxMatching(T, [H], ResultMatching).
-maxMatching([], CurMathing, CurMathing):- !.
+maxMatching([], CurMathing, CurMathing):-!.
 maxMatching([H|T], CurMatching, ResultMatching):- not(hasAdjacent(H, CurMatching)), append(CurMatching, [H], NewMatching), maxMatching(T, NewMatching, ResultMatching), !.
 maxMatching([_|T], CurMatching, ResultMatching):- maxMatching(T, CurMatching, ResultMatching).
 
@@ -80,3 +82,5 @@ in_list_exlude([H|T],El,[H|Tail]):-in_list_exlude(T,El,Tail).
 contains([], _):- !, fail.
 contains([H|_], H):- !.
 contains([_|T], N):- contains(T, N).
+
+
