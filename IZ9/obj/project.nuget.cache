@@ -1,0 +1,10 @@
+{
+  "version": 2,
+  "dgSpecHash": "IgPhxj5uFFE6pvgSokDMmgyM5+e6cc4Pw020qid8/MQRH32ywA1BnKAq6W7IDPtAsgFySy97g/7iHeeHf8syNg==",
+  "success": true,
+  "projectFilePath": "C:\\Учёбка и не учёбка\\Учеба\\Функциональное и логическое программирование\\LocalRepo\\prolog\\IZ9\\IZ9.fsproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\Natal\\.nuget\\packages\\fsharp.core\\4.7.0\\fsharp.core.4.7.0.nupkg.sha512"
+  ],
+  "logs": []
+}
